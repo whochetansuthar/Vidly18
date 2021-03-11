@@ -1,0 +1,97 @@
+﻿@model Vidly18.ViewModel.MovieViewModel
+@{
+    ViewBag.Title = "Movie";
+}
+
+<h2>Movie</h2>
+<form id="form">
+    @Html.HiddenFor(x=>x.Movie.Id);
+    <div class="form-group">
+        <label>Name</label>
+        @if (Model.Movie.Name != null)
+        {
+            <input type="text" id="movie-name" value="@Model.Movie.Name" class="form-control" name="movie-name" />
+        }
+        else
+        {
+            <input type="text" id="movie-name" class="form-control" name="movie-name" />
+        }
+    </div>
+
+    <div class="form-group">
+        <label>Release Date</label>
+        @if (Model.Movie.ReleaseDate != null)
+        {
+            <input type="date" id="release-date" class="form-control" value="@Model.Movie.ReleaseDate.Value.ToString("yyyy-MM-dd")" name="release-date" />
+        }
+        else
+        {
+            <input type="date" id="release-date" class="form-control" name="release-date" />
+        }
+
+    </div>
+
+    <div class="form-group">
+        <label>Genre</label>
+        <select id="genre" name="genre" class="form-control">
+            <option>Select Genre</option>
+            @foreach (var item in Model.Genres)
+            {
+                <option @if (item.Id == Model.Movie.GenreId) { <text>selected</text>} value="@item.Id">@item.GenreName</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Number in stock</label>
+        <input type="number" id="stock" value="@Model.Movie.NumberInStock" class="form-control" name="stock" />
+    </div>
+    <input type="submit" value="Save" class="btn btn-success" />
+</form>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            var movieDto = {};
+            var id = @Model.Movie.Id;
+            $("#form").submit(function (e) {
+                e.preventDefault();
+                movieDto.Name = $("#movie-name").val();
+                movieDto.ReleaseDate = $("#release-date").val();
+                movieDto.GenreId = $("#genre").val();
+                movieDto.NumberInStock = $("#stock").val();
+                movieDto.DateAdded = new Date().toLocaleDateString();
+                if (id != 0) {
+                    movieDto.Id = id;
+                    console.log("Update Called");
+                    $.ajax({
+                        url: "/api/movie?Id=" + id,
+                        method: "PUT",
+                        data: movieDto
+                    }).done(function () {
+                        window.location.href = "../../movie"
+                        toastr.success("Data successfully updated");
+                    }).fail(function () {
+                        console.log("something went wrong");
+                        toastr.error("something went wrong");
+                    })
+                } else {
+                    console.log("Create Called");
+                    $.ajax({
+                        url: "/api/movie",
+                        method: "POST",
+                        data: movieDto
+                    }).done(function () {
+                        window.location.href = "../../movie"
+                        toastr.success("Data successfully updated");
+                    }).fail(function () {
+                        console.log("something went wrong");
+                        toastr.error("something went wrong");
+                    })
+                }
+                console.log(movieDto);
+            })
+        })
+    </script>
+}

@@ -1,0 +1,101 @@
+﻿@model Vidly18.ViewModel.CustomerVIewModel
+@{
+    ViewBag.Title = "Customer";
+}
+
+<h2>Customer</h2>
+<form id="form">
+    @Html.HiddenFor(x => x.Customer.Id)
+    <div class="form-group">
+        <label>Name</label>
+        @if (Model.Customer.Name == null)
+        {
+            <input type="text" required id="customer-name" class="form-control" name="customer-name" />
+        }
+        else
+        {
+            <input type="text" required id="customer-name" value="@Model.Customer.Name" class="form-control" name="customer-name" />       
+        }
+
+        
+    </div>
+
+    <div class="form-group">
+        <label>Birth Date</label>
+        @if (Model.Customer.BirthDate==null)
+        {
+            <input type="date" required id="birth-date" class="form-control" name="birth-date" /> 
+        }
+        else
+        {
+            <input type="date" required id="birth-date" value="@Model.Customer.BirthDate.Value.ToString("yyyy-MM-dd")" class="form-control" name="birth-date" />
+        }       
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" checked="@Model.Customer.IsSubscribedToNewsletter" id="isSubscribed">
+        <label class="form-check-label" for="isSubscribed">
+            Subscribe to newsletter
+        </label>
+    </div>
+
+    <div class="form-group">
+        <label>Membership</label>
+        <select id="membership" required name="membership" class="form-control">
+            <option>Select Membership</option>
+            @{ int a = 1;}
+
+            @foreach (var item in Model.MembershipTypes)
+            {
+                <option @if (Model.Customer.MembershipTypeId==a) { <text>selected</text> } value="@item.Id">@item.MembershipTypeName</option>
+                a++;
+            }
+        </select>
+    </div>
+    <input type="submit" value="Save" class="btn btn-success" />
+</form>
+
+@section  scripts
+{
+    <script>
+        var id = @Model.Customer.Id;
+
+        var customerDto = {};
+        $(document).ready(function () {
+            $("#form").submit(function (e) {
+                e.preventDefault();
+                customerDto.Name = $("#customer-name").val();
+                customerDto.BirthDate = $("#birth-date").val();
+                customerDto.IsSubscribedToNewsletter = $("#isSubscribed").prop("checked");
+                customerDto.MembershipTypeId = $("#membership").val();
+                customerDto.Id = id;
+                console.log(customerDto);
+
+                if (id != 0) {
+                    $.ajax({
+                        url: "/api/customer?Id="+id,
+                        method: "PUT",
+                        data: customerDto
+                    }).done(function () {
+                        window.location.replace("../../customer");
+                        toastr.success("Data Successfully Updated");
+                    }).fail(function () {
+                        toastr.fail("Oops! Something went wrong");
+                    })
+                } else {
+                    $.ajax({
+                        url: "/api/customer",
+                        method: "POST",
+                        data: customerDto
+                    }).done(function () {
+                        window.location.replace("../../customer");
+                        toastr.success("Data Successfully Saved");
+                    }).fail(function () {
+                        toastr.fail("Oops! Something went wrong");
+                    })
+                }
+
+            })
+        })
+    </script>    
+}

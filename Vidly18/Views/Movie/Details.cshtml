@@ -1,0 +1,14 @@
+﻿@model Vidly18.Models.Movie
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+<h4>@Model.Name</h4>
+<ul class="list-group">
+    <li class="list-group-item">Genre: @Model.Genre</li>
+    <li class="list-group-item">Date Added: @Model.DateAdded</li>
+    <li class="list-group-item">Release Date: @Model.ReleaseDate</li>
+    <li class="list-group-item">Total Stock: @Model.NumberInStock</li>
+    <li class="list-group-item">Available Stock: </li>
+</ul>

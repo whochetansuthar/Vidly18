@@ -1,0 +1,13 @@
+﻿@model Vidly18.Models.Customer
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+<h4>@Model.Name</h4>
+<ul class="list-group">
+    <li class="list-group-item">DateOfBirth: @Model.BirthDate</li>
+    <li class="list-group-item">MembershipType: @Model.MembershipType.MembershipTypeName</li>
+    <li class="list-group-item">Duration: @Model.MembershipType.DurationInMonth</li>
+    <li class="list-group-item">Fee: @Model.MembershipType.SubscriptionCharge</li>
+</ul>

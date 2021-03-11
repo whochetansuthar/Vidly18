@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Customer</h2>
+@Html.ActionLink("New", "Customer", new { }, new { @class = "btn btn-primary" })
+<br />
+<table id="data-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Membership Type</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            var table = $("#data-table").DataTable({
+                ajax: {
+                    url: "api/customer",
+                    method: "GET",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "Name",
+                        render: function (data, type, row) {
+                            return "<a href='Customer/Customer/" + row.Id + "' class'btn-link'>" + data + "</a>";
+                        }
+                    },
+                    {
+                        data: "MembershipType.MembershipTypeName"
+                    },
+                    {
+                        render: function (data, type, row) {
+                            return "<a row-data-id=" + row.Id + " href='' class='btn-link js-delete'>Delete</a>";
+                        }
+                    }
+                ]
+            });
+            $("#data-table").on("click", ".js-delete", function (e) {
+                e.preventDefault()
+                    var button = $(this);
+                    var res = confirm("are you sure");
+                if (res) {
+                    $.ajax({
+                        url: "api/customer/" + button.attr("row-data-id"),
+                        method: "DELETE",
+                    }).done(function() {
+                        table.row(button.closest("tr")).remove().draw();
+                    }).fail(function () {
+                        toastr.fail("Something Went wrong");
+                    })
+                    }
+                })
+        })
+    </script>
+}
